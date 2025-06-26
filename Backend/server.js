@@ -28,92 +28,8 @@ con.connect((err) => {
 });
 
 
-//categories
-// app.get("/categories", (req, res) => {
-//     const sql = "SELECT * FROM categories";
-//     con.query(sql, (err, results) => {
-//         if (err) {
-//             console.error("Error fetching categories:", err);
-//             return res.status(500).json({ error: "Database query error" });
-//         }
-//         return res.status(200).json(results);
-//     });
-// });
-
-// app.get("/categories/:category_id", (req, res) => {
-//     const category_id = req.params.category_id;
-//     const sql = "select * from categories where category_id=?";
-//     con.query(sql, [category_id], (err, data) => {
-//         if (err) return res.json("error");
-//         return res.json(data)
-//     });
-// });
-
-
-// app.post("/addcategories", (req, res) => {
-//     const { category_id, category_name, category_description, category_total_books, category_status } = req.body;
-
-//     const sql = `
-//         INSERT INTO categories 
-//         (category_id, category_name, category_description, category_total_books, category_status) 
-//         VALUES (?, ?, ?, ?, ?)
-//     `;
-
-//     con.query(
-//         sql,
-//         [category_id, category_name, category_description, category_total_books, category_status],
-//         (err, data) => {
-//             if (err) {
-//                 console.error("Error inserting category:", err);
-//                 return res.status(500).json({ error: "Database insertion failed" });
-//             }
-
-//             console.log("Inserted category:", data);
-//             return res.status(201).json({ message: "Category added successfully", data });
-//         }
-//     );
-// });
-
-
-// app.put('/editcategory/:category_id', (req, res) => {
-//     const category_id = req.params.category_id;
-//     const { category_name, category_description, category_total_books, category_status } = req.body;
-
-//     const sql = `
-//     UPDATE categories 
-//     SET 
-//       category_name = ?, 
-//       category_description = ?, 
-//       category_total_books = ?, 
-//       category_status = ? 
-//     WHERE category_id = ?
-//   `;
-
-//     con.query(
-//         sql,
-//         [category_name, category_description, category_total_books, category_status, category_id],
-//         (err, result) => {
-//             if (err) {
-//                 console.error("Error updating category:", err);
-//                 return res.status(500).json({ message: "Failed to update category" });
-//             }
-
-//             console.log("Updated category:", category_id);
-//             return res.status(200).json({ message: "Category updated successfully" });
-//         }
-//     );
-// });
-
-
-// app.delete("/deletecategory/:category_id", (req, res) => {
-//     const category_id = req.params.category_id;
-//     const sql = "DELETE from categories where category_id=?";
-//     con.query(sql, [category_id], (err, data) => {
-//         if (err) return res.json("error");
-//         console.log("delete category")
-//         return res.json(data);
-//     })
-// });
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
 
 
 app.get("/categories", (req, res) => {
@@ -166,41 +82,6 @@ app.post("/addcategories", (req, res) => {
     );
 });
 
-// app.post("/addcategories", (req, res) => {
-//     const { category_name, category_description, category_total_books, category_status } = req.body;
-
-//     if (!category_name) {
-//         return res.status(400).json({ error: "Category name is required" });
-//     }
-
-//     const sql = `
-//         INSERT INTO categories
-//         (category_name, category_description, category_total_books, category_status)
-//         VALUES (?, ?, ?, ?)
-//     `;
-
-//     con.query(
-//         sql,
-//         [category_name, category_description, category_total_books, category_status],
-//         (err, result) => {
-//             if (err) {
-//                 console.error("Error inserting category:", err);
-//                 return res.status(500).json({ error: "Database insertion failed", details: err.message });
-//             }
-
-//             const newCategoryId = result.insertId;
-//             console.log("Inserted category with ID:", newCategoryId);
-//             return res.status(201).json({
-//                 message: "Category added successfully",
-//                 category_id: newCategoryId,
-//                 category_name,
-//                 category_description,
-//                 category_total_books,
-//                 category_status
-//             });
-//         }
-//     );
-// });
 
 app.put('/editcategory/:category_id', (req, res) => {
     const category_id = req.params.category_id;
@@ -258,9 +139,6 @@ app.delete('/deletecategory/:category_id', (req, res) => {
         return res.status(200).json({ message: "Category deleted successfully" });
     });
 });
-
-
-
 
 //categories ended
 
@@ -475,7 +353,7 @@ app.post("/addbooks", (req, res) => {
     const { book_name, book_author, book_publisher, book_copies, book_category_id } = req.body;
 
     // Check for required fields
-    if (!book_name || !book_category_id || book_copies == null) {
+    if (!book_name || !book_category_id || book_copies == null) {  
         return res.status(400).json({ error: "Missing required fields: book_name, book_category_id, or book_copies" });
     }
 
@@ -519,73 +397,7 @@ app.post("/addbooks", (req, res) => {
     });
 });
 
-// });
 
-// app.put("/editbook/:book_id", (req, res) => {
-//     const book_id = req.params.book_id;
-//     const { book_name, book_author, book_publisher, book_copies, book_category_id } = req.body;
-
-//     if (!book_name || !book_category_id || book_copies == null) {
-//         return res.status(400).json({ error: "Missing required fields" });
-//     }
-
-//     con.beginTransaction((err) => {
-//         if (err) return res.status(500).json({ error: "Transaction start failed" });
-
-//         // Step 1: Get old book details
-//         con.query("SELECT book_copies, book_category_id FROM books WHERE book_id = ?", [book_id], (err, oldData) => {
-//             if (err || oldData.length === 0) {
-//                 return con.rollback(() => res.status(404).json({ error: "Book not found" }));
-//             }
-
-//             const oldCopies = oldData[0].book_copies;
-//             const oldCatId = oldData[0].book_category_id;
-
-//             // Step 2: Update book details
-//             const updateBookSql = `
-//                 UPDATE books SET book_name=?, book_author=?, book_publisher=?, book_copies=?, book_category_id=?
-//                 WHERE book_id=?`;
-//             con.query(updateBookSql, [book_name, book_author, book_publisher, book_copies, book_category_id, book_id], (err) => {
-//                 if (err) return con.rollback(() => res.status(500).json({ error: "Update failed" }));
-
-//                 // Step 3: Adjust category counts
-//                 const queries = [];
-
-//                 if (oldCatId !== book_category_id) {
-//                     // Category changed: subtract from old, add to new
-//                     queries.push(["UPDATE categories SET category_total_books = GREATEST(0, category_total_books - ?) WHERE category_id = ?", [oldCopies, oldCatId]]);
-//                     queries.push(["UPDATE categories SET category_total_books = category_total_books + ? WHERE category_id = ?", [book_copies, book_category_id]]);
-//                 } else if (book_copies !== oldCopies) {
-//                     // Same category, only update difference
-//                     const diff = book_copies - oldCopies;
-//                     const sql = `UPDATE categories SET category_total_books = category_total_books + ? WHERE category_id = ?`;
-//                     queries.push([sql, [diff, book_category_id]]);
-//                 }
-
-//                 // Execute category update queries one by one
-//                 const run = (i = 0) => {
-//                     if (i >= queries.length) {
-//                         return con.commit((err) => {
-//                             if (err) return con.rollback(() => res.status(500).json({ error: "Commit failed" }));
-
-//                             con.query("SELECT * FROM books WHERE book_id = ?", [book_id], (err, result) => {
-//                                 if (err) return res.status(200).json({ message: "Updated, but fetch failed" });
-//                                 res.status(200).json(result[0]);
-//                             });
-//                         });
-//                     }
-//                     const [sql, params] = queries[i];
-//                     con.query(sql, params, (err) => {
-//                         if (err) return con.rollback(() => res.status(500).json({ error: "Category count update failed" }));
-//                         run(i + 1);
-//                     });
-//                 };
-
-//                 run();
-//             });
-//         });
-//     });
-// });
 
 app.put("/editbook/:book_id", (req, res) => {
     const book_id = req.params.book_id;
@@ -624,7 +436,7 @@ app.put("/editbook/:book_id", (req, res) => {
 
             // Return updated book
             con.query("SELECT * FROM books WHERE book_id = ?", [book_id], (err, result) => {
-                if (err) return res.status(200).json({ message: "Book updated, but fetch failed" });
+                if (err) return res.status(500).json({ message: " fetch failed" });
                 res.status(200).json(result[0]);
             });
         });
@@ -773,8 +585,7 @@ app.delete("/deletemember/:member_id", (req, res) => {
 
 
 
-const storage = multer.memoryStorage();
-const upload = multer({ storage: storage });
+
 
 //browsebook upload image
 // app.post('/upload', upload.single('image'), (req, res) => {
@@ -829,7 +640,7 @@ app.get("/books_with_categories", (req, res) => {
             b.book_publisher,
             b.book_copies,
             b.book_category_id,
-            c.category_name  -- Fetch category_name directly
+            c.category_name  
         FROM
             books AS b
         LEFT JOIN
@@ -880,11 +691,11 @@ app.get("/browseimage", (req, res) => {
             b.book_copies,
             b.book_category_id,    
             c.category_name,       
-            bb.browse_id,          -- Will be NULL if no image for the book
-            bb.image,              -- Will be NULL if no image for the book
-            bb.borrow_date,        -- Will be NULL if no image for the book
-            bb.return_due_date,    -- Will be NULL if no image for the book
-            bb.fine                -- Will be NULL if no image for the book
+            bb.browse_id,         
+            bb.image,             
+            bb.borrow_date,       
+            bb.return_due_date,    
+            bb.fine                
         FROM books AS b
         LEFT JOIN browsebook AS bb ON b.book_id = bb.book_id
         LEFT JOIN categories AS c ON b.book_category_id = c.category_id;
