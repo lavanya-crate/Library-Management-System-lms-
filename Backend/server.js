@@ -228,101 +228,12 @@ app.post("/logincredentials", (req, res) => {
                 return res.status(401).json({ message: "Invalid email or password" });
             }
         });
-    });
+    }); 
 });
 
 
+
 //books
-// app.get("/books", (req, res) => {
-//     const sql = "SELECT * FROM books";
-//     con.query(sql, (err, results) => {
-//         if (err) {
-//             console.error("Error fetching books:", err);
-//             return res.status(500).json({ error: "Database query error" });
-//         }
-//         return res.status(200).json(results);
-//     });
-// });
-
-// app.get("/books/:book_id", (req, res) => {
-//     const book_id = req.params.book_id;
-//     const sql = "select * from books where book_id=?";
-//     con.query(sql, [book_id], (err, data) => {
-//         if (err) return res.json("error");
-//         return res.json(data)
-//     });
-// });
-
-
-
-// app.post("/addbooks", (req, res) => {
-//     const { book_name, book_author, book_publisher, book_category, book_copies, category_id } = req.body;
-
-//     const sql = `
-//         INSERT INTO books(book_name, book_author, book_publisher, book_category, book_copies, category_id)
-//         VALUES (?, ?, ?, ?, ?, ?);
-//     `;
-
-//     con.query(
-//         sql,
-//         [book_name, book_author, book_publisher, book_category, book_copies, category_id],
-//         (err, data) => {
-//             if (err) {
-//                 console.error("Error inserting books:", err);
-//                 return res.status(500).json({ error: "Database insertion failed" });
-//             }
-//             console.log("Inserted books:", data);
-//             return res.status(201).json({ message: "Book added successfully", data });
-//         }
-//     );
-// });
-
-
-// app.put("/editbook/:book_id", (req, res) => {
-//     const book_id = req.params.book_id;
-//     const { book_name, book_author, book_publisher, book_category, book_copies, category_id } = req.body;
-
-//     const sql = `
-//     UPDATE books
-//     SET 
-//     book_name = ?,
-//      book_author = ?,
-//      book_publisher = ?, 
-//      book_category = ?, 
-//      book_copies = ?, 
-//      category_id = ?
-//       WHERE book_id = ?;
-//     `;
-
-//     con.query(
-//         sql,
-//         [book_name, book_author, book_publisher, book_category, book_copies, category_id, book_id],
-//         (err, result) => {
-//             if (err) {
-//                 console.error("Error updating book:", err);
-//                 return res.status(500).json({ message: "Failed to update Book" });
-//             }
-
-//             console.log("Updated book:", book_id);
-//             return res.status(200).json({ message: "Book updated successfully" });
-//         }
-//     )
-// });
-
-
-// app.delete("/deletebook/:book_id", (req, res) => {
-//     const book_id = req.params.book_id;
-//     const sql = "DELETE FROM books WHERE book_id = ?";
-//     con.query(sql, [book_id], (err, result) => {
-//         if (err) {
-//             console.error("Error deleting book:", err);
-//             return res.status(500).json({ error: "Failed to delete book" });
-//         }
-//         res.status(200).json({ message: "Book deleted successfully" });
-//     });
-// });
-
-
 app.get("/books", (req, res) => {
     const sql = "SELECT * FROM books";
     con.query(sql, (err, results) => {
@@ -584,52 +495,6 @@ app.delete("/deletemember/:member_id", (req, res) => {
 });
 
 
-
-
-
-//browsebook upload image
-// app.post('/upload', upload.single('image'), (req, res) => {
-//   const bookId = req.body.book_id;
-//   const image = req.file.buffer;
-
-//   console.log(bookId+" bk id")
-
-//   const sql = "INSERT INTO browsebook (image, book_id) VALUES (?, ?)";
-//   con.query(sql, [image, bookId], (err, result) => {
-//     if (err) throw err;
-//     res.send("Image uploaded successfully");
-//   });
-// });
-
-
-
-// app.get("/browseimage", (req, res) => {
-//     const sql = `
-//         SELECT 
-//             browsebook.browse_id,
-//             browsebook.image,
-//             browsebook.borrow_date,
-//             browsebook.return_due_date,
-//             browsebook.fine,
-//             books.book_id,
-//             books.book_name,
-//             books.book_author,
-//             books.book_publisher,
-//             books.book_category,
-//             books.book_copies,
-//             books.category_id
-//         FROM browsebook
-//         JOIN books ON browsebook.book_id = books.book_id
-//     `;
-
-//     con.query(sql, (err, data) => {
-//         if (err) {
-//             console.error("Database error:", err);
-//             return res.status(500).json({ error: "Database error", details: err });
-//         }
-//         return res.json(data);
-//     });
-// });
 
 app.get("/books_with_categories", (req, res) => {
     const sql = `
